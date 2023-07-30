@@ -74,7 +74,7 @@ void B4aEventAction::BeginOfEventAction(const G4Event* /*event*/)
   fTrackLAbs = 0.;
   fTrackLGap = 0.;
   etot = 0.;
-
+  
 
 }
 
