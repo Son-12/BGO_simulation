@@ -31,8 +31,13 @@
 #include "B4RunAction.hh"
 #include "B4Analysis.hh"
 
+#include "CalorimeterSD.hh"
+#include "CalorHit.hh"
+
 #include "G4RunManager.hh"
 #include "G4Event.hh"
+#include "G4SDManager.hh"
+#include "G4HCofThisEvent.hh"
 #include "G4UnitsTable.hh"
 
 #include "Randomize.hh"
@@ -45,6 +50,7 @@
 
 B4aEventAction::B4aEventAction()
  : G4UserEventAction(),
+   edep_hit(0.),
    fEnergyAbs(0.),
    fEnergyGap(0.),
    fTrackLAbs(0.),
@@ -64,16 +70,43 @@ B4aEventAction::~B4aEventAction()
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
+CalorHitsCollection*
+B4aEventAction::GetHitsCollection(G4int hcID,
+                                  const G4Event* event) const
+{
+  auto hitsCollection
+    = static_cast<CalorHitsCollection*>(
+        event->GetHCofThisEvent()->GetHC(hcID));
+
+  if ( ! hitsCollection ) {
+    G4ExceptionDescription msg;
+    msg << "Cannot access hitsCollection ID " << hcID;
+    G4Exception("EventAction::GetHitsCollection()",
+      "MyCode0003", FatalException, msg);
+  }
+
+  return hitsCollection;
+}
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
 void B4aEventAction::BeginOfEventAction(const G4Event* /*event*/)
 {  
  // G4cout << "void B4aEventAction::BeginOfEventAction(const G4Event* /*event*/)" << G4endl;
   // initialisation per event
   evID = 0;
+  edep_hit = 0. ;
   fEnergyAbs = 0.;
   fEnergyGap = 0.;
   fTrackLAbs = 0.;
   fTrackLGap = 0.;
   etot = 0.;
+
+  //vector clear 
+  neutronEnergy->clear();
+  protonEnergy->clear();
+  gammaEnergy->clear();
+  secondEnergy->clear();
   
 
 }
@@ -84,15 +117,31 @@ void B4aEventAction::EndOfEventAction(const G4Event* event)
 {
 //G4cout << "void B4aEventAction::EndOfEventAction(const G4Event* event)" << G4endl;
 
+  if ( fAbsHCID == -1 ) {
+    fAbsHCID
+      = G4SDManager::GetSDMpointer()->GetCollectionID("AbsorberHitsCollection");
+  }
+
+  // Get hits collections
+  auto absoHC = GetHitsCollection(fAbsHCID, event);
+
+  // Get hit with total values
+  auto absoHit = (*absoHC)[absoHC->entries()-1];
+  edep_hit = absoHit->GetEdep();
+
+  
+
   TTree* tree = (TTree*)gROOT-> FindObject("tree");
   tree->SetBranchAddress("eveno"  ,&evID);
 
   tree->SetBranchAddress("pi_edep"  ,&fEnergyAbs);
+  tree->SetBranchAddress("pi_edep_hit"  ,&edep_hit);
 
   evID = event->GetEventID();
   
   // neutronEnergyとprotonEnergyに保存されているエネルギーをヒストグラムにFill
 
+  
     for (int i = 0; i < neutronEnergy->size(); i++)
     {
       tree->SetBranchAddress("neutron_E"	, &neutronEnergy);

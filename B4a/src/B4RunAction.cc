@@ -63,6 +63,7 @@ B4RunAction::B4RunAction()
   pvector_data = new std::vector<G4double>();
   //G4double data;
   tree->Branch("pi_edep", &double_data , "pi-_edep/D");
+  tree->Branch("pi_edep_hit", &double_data , "pi-_edep_hit/D");
   // tree->Branch("neutron_E", &data , "neutron_E/D");
   // tree->Branch("proton_E", &data , "proton_E/D");
   // tree->Branch("gamma_E", &data , "gamma_E/D");

@@ -33,6 +33,9 @@
 #include "G4UserEventAction.hh"
 #include "globals.hh"
 #include <vector>
+
+#include "CalorHit.hh"
+
 // #include "caloconstant.hh" //なんか定数みたいなのを入れると便利ぽい。
 
 /// Event action class
@@ -67,7 +70,16 @@ public:
   std::vector<G4double> *secondEnergy;
 
 private:
+  CalorHitsCollection* GetHitsCollection(G4int hcID,
+                                            const G4Event* event) const;
+
+  // data members
+    G4int fAbsHCID = -1;
+    G4int fGapHCID = -1;
+
   G4int evID;
+
+  G4double edep_hit;
 
   G4double fEnergyAbs;
   G4double fEnergyGap;

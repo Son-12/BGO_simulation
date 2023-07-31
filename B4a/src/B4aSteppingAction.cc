@@ -73,7 +73,7 @@ void B4aSteppingAction::UserSteppingAction(const G4Step *step)
 
   // initialize particle id and particle name
   int p_id = 0;
-  p_id = track->GetParticleDefinition()->GetParticleDefinitionID();
+  p_id = track->GetParticleDefinition()->GetPDGEncoding(); //GetParticleDefinitionID();
   G4String p_name = track->GetParticleDefinition()->GetParticleName();
 
   //-------------- Get the all paticle edep, length -----------------//
@@ -97,25 +97,23 @@ void B4aSteppingAction::UserSteppingAction(const G4Step *step)
       // confirm the pi- is existing in the absorber(GetNameをするとAbsoPVポインタの名前が返ってくる)
       //  G4cout << "pi- is existing in " << fDetConstruction->GetAbsorberPV()->GetName() << G4endl;
       fEventAction->AddAbs(edep, stepLength); // +=edep
-
-      // confirm the particle id of pi-
-      //  G4cout << "////----- particle id is -----////" << p_id << G4endl;
-      //  G4cout << "////-----particle name is-----////" << p_name << G4endl;
-      //  G4cout << G4endl;
     }
   }
   // //-------------- Get the primary particle edep, length ------------//
 
   // Get the vector of secondary particles in the current step
   const std::vector<const G4Track *> *secondaries = step->GetSecondaryInCurrentStep(); // stepの終了時に生成された2次粒子を含むG4Track型のvectorを返す。
+  
+  // G4int second_p_n = secondaries->size();
+  // G4cout << "second particle number(second_p_n) is " << second_p_n <<G4endl;
 
-  // get the secondary particle //
-  if (track->GetTrackID() != 1)
-    return;
+  // // get the secondary particle //
+  // if (track->GetTrackID() != 1)
+  //   return;
 
-  //pi- stop events
-  if (track->GetTrackStatus() == fStopAndKill)
-  {
+  // //pi- stop events
+  // if (track->GetTrackStatus() == fStopAndKill)
+  // {
 
     G4double second_P_E = 0 * MeV; // secondary particle energies
     G4ThreeVector neutrondirection;
@@ -123,26 +121,30 @@ void B4aSteppingAction::UserSteppingAction(const G4Step *step)
 
     // Loop through the secondary particles
     G4int secosize = secondaries->size(); // 2次粒子の数(vectorであるsecondariesの要素数を返す)
-    // G4cout << "number of secondary particles (secondaries->size) ==== " << secosize << G4endl;
+    //G4cout << "number of secondary particles (secondaries->size) ==== " << secosize << G4endl;
 
     for (size_t i = 0; i < secosize; ++i)
     {
       // Get the G4Track object for each secondary particle
       const G4Track *secondaryTrack = (*secondaries)[i];
+      G4int parentID = secondaryTrack->GetParentID();
 
       // Get the G4ParticleDefinition object for the secondary particle
       const G4ParticleDefinition *particleDef = secondaryTrack->GetDefinition();
 
+      G4int s_p_id = particleDef->GetPDGEncoding(); //second particle id 
+
       // Get the information of the secondary particle
       G4String seco_particleName = particleDef->GetParticleName();
-      p_id = particleDef->GetParticleDefinitionID();
+      p_id = particleDef->GetParticleDefinitionID(); //これはsecond particleの外でloop回しているもの。
       second_P_E = secondaryTrack->GetKineticEnergy();
-      G4double *psecond_P_E = &second_P_E;
+      
       fEventAction->AddSecondEnergy(second_P_E); //void AddSecondEnergy(G4double energy) { secondEnergy->push_back(energy); }
-      // G4cout << "secondry particleName is " << seco_particleName << " " <<"kinetic Enenrgy = " << second_P_E << " MeV" << G4endl;
-      // G4cout << "////----- particle id is -----////" << p_id << G4endl;
-      // G4cout << "////-----particle name is-----////" << seco_particleName << G4endl;
-      // G4cout << G4endl;
+
+      G4cout << "////parentID///// " << parentID << G4endl;
+      G4cout << "secondry particleName is " << seco_particleName << " " <<"kinetic Enenrgy = " << second_P_E << " MeV" << G4endl;
+      G4cout << "////----- particle id is -----////" << p_id << "      /////s_p_id/////" << s_p_id << G4endl;
+      G4cout << G4endl;
 
       // case of secondary particle is neutron
       if (seco_particleName == "neutron")
@@ -166,7 +168,7 @@ void B4aSteppingAction::UserSteppingAction(const G4Step *step)
       }
 
     } // loop for number of second particle
-  }   // if track is kill
+  //  }   // if track is kill
 
   // G4cout << "///////////////Usersteppingaction end////////////////" << G4endl;
 }

@@ -1,0 +1,7 @@
+/home/sks/user/kamada/MonteCarlo/geant4/son/test/build/CMakeFiles/install/strip.dir
+/home/sks/user/kamada/MonteCarlo/geant4/son/test/build/CMakeFiles/install/local.dir
+/home/sks/user/kamada/MonteCarlo/geant4/son/test/build/CMakeFiles/install.dir
+/home/sks/user/kamada/MonteCarlo/geant4/son/test/build/CMakeFiles/list_install_components.dir
+/home/sks/user/kamada/MonteCarlo/geant4/son/test/build/CMakeFiles/rebuild_cache.dir
+/home/sks/user/kamada/MonteCarlo/geant4/son/test/build/CMakeFiles/edit_cache.dir
+/home/sks/user/kamada/MonteCarlo/geant4/son/test/build/CMakeFiles/exampleB4a.dir

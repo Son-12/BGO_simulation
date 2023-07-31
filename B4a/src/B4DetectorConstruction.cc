@@ -28,7 +28,7 @@
 /// \brief Implementation of the B4DetectorConstruction class
 
 #include "B4DetectorConstruction.hh"
-// #include "CalorimeterSD.hh"
+#include "CalorimeterSD.hh"
 
 #include "G4Material.hh"
 #include "G4NistManager.hh"
@@ -44,6 +44,8 @@
 #include "G4PhysicalVolumeStore.hh"
 #include "G4LogicalVolumeStore.hh"
 #include "G4SolidStore.hh"
+
+#include "G4SDManager.hh"
 
 #include "G4VisAttributes.hh"
 #include "G4Colour.hh"
@@ -236,12 +238,12 @@ G4VPhysicalVolume *B4DetectorConstruction::DefineVolumes()
 void B4DetectorConstruction::ConstructSDandField()
 {
 
-  // //
-  // // Sensitive detectors
-  // //
-  // auto absoSD = new CalorimeterSD("AbsorberSD", "AbsorberHitsCollection");//, fNofLayers); //fNofLayrsの引数絶対要らない。
-  // G4SDManager::GetSDMpointer()->AddNewDetector(absoSD);
-  // SetSensitiveDetector("Abso",absoSD);
+  //
+  // Sensitive detectors
+  //
+  auto absoSD = new CalorimeterSD("AbsorberSD", "AbsorberHitsCollection");//, fNofLayers); //fNofLayrsの引数絶対要らない。
+  G4SDManager::GetSDMpointer()->AddNewDetector(absoSD);
+  SetSensitiveDetector("Abso",absoSD);
 
   // Create global magnetic field messenger.
   // Uniform magnetic field is then created automatically if

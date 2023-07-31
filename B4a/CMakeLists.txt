@@ -70,6 +70,7 @@ set(EXAMPLEB4A_SCRIPTS
   histplot.cc #(230730)editmyself
   run1.mac
   run2.mac
+  one.mac
   vis.mac
   )
 
